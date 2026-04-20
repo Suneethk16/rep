@@ -1,7 +1,8 @@
+import json
 from functools import lru_cache
 from typing import Literal
 
-from pydantic import Field, field_validator
+from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 
@@ -18,7 +19,8 @@ class Settings(BaseSettings):
     app_env: Literal["development", "staging", "production", "test"] = "development"
     debug: bool = False
     api_v1_prefix: str = "/api/v1"
-    cors_origins: list[str] = Field(default_factory=list)
+    # Accepts plain URL, comma-separated list, or JSON array — parsed in cors_origins_list
+    cors_origins: str = Field(default="")
 
     jwt_secret_key: str
     jwt_algorithm: str = "HS256"
@@ -49,12 +51,18 @@ class Settings(BaseSettings):
     stripe_webhook_secret: str = ""
     stripe_currency: str = "inr"
 
-    @field_validator("cors_origins", mode="before")
-    @classmethod
-    def _split_origins(cls, v: object) -> object:
-        if isinstance(v, str):
-            return [o.strip() for o in v.split(",") if o.strip()]
-        return v
+    @property
+    def cors_origins_list(self) -> list[str]:
+        v = (self.cors_origins or "").strip()
+        if not v:
+            return []
+        try:
+            parsed = json.loads(v)
+            if isinstance(parsed, list):
+                return [str(x).strip() for x in parsed if str(x).strip()]
+        except json.JSONDecodeError:
+            pass
+        return [o.strip() for o in v.split(",") if o.strip()]
 
     @property
     def redis_cache_url(self) -> str:
