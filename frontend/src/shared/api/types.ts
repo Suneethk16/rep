@@ -55,6 +55,7 @@ export interface Product {
   description: string;
   price: string;
   stock: number;
+  stock_unit: string;
   image_url: string | null;
   category_id: UUID | null;
   created_at: string;

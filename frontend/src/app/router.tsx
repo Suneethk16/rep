@@ -18,6 +18,7 @@ const AdminOverviewPage = lazy(() => import("@/features/admin/AdminOverviewPage"
 const AdminProductsPage = lazy(() => import("@/features/admin/AdminProductsPage").then(m => ({ default: m.AdminProductsPage })));
 const AdminUsersPage = lazy(() => import("@/features/admin/AdminUsersPage").then(m => ({ default: m.AdminUsersPage })));
 const AdminOrdersPage = lazy(() => import("@/features/admin/AdminOrdersPage").then(m => ({ default: m.AdminOrdersPage })));
+const AdminCategoriesPage = lazy(() => import("@/features/admin/AdminCategoriesPage").then(m => ({ default: m.AdminCategoriesPage })));
 const NotFoundPage = lazy(() => import("@/shared/layout/NotFoundPage").then(m => ({ default: m.NotFoundPage })));
 
 const PageLoader = () => (
@@ -58,6 +59,7 @@ export const router = createBrowserRouter([
             children: [
               { index: true, element: <S><AdminOverviewPage /></S> },
               { path: "products", element: <S><AdminProductsPage /></S> },
+              { path: "categories", element: <S><AdminCategoriesPage /></S> },
               { path: "users", element: <S><AdminUsersPage /></S> },
               { path: "orders", element: <S><AdminOrdersPage /></S> },
             ],

@@ -14,8 +14,14 @@ export interface ProductInput {
   description?: string;
   price: string;
   stock: number;
+  stock_unit?: string;
   image_url?: string | null;
   category_id?: string | null;
+}
+
+export interface CategoryInput {
+  name: string;
+  slug: string;
 }
 
 export const productsApi = api.injectEndpoints({
@@ -68,6 +74,14 @@ export const productsApi = api.injectEndpoints({
       query: () => "/categories",
       providesTags: ["Category"],
     }),
+    createCategory: build.mutation<Category, CategoryInput>({
+      query: (body) => ({ url: "/categories", method: "POST", body }),
+      invalidatesTags: ["Category"],
+    }),
+    deleteCategory: build.mutation<void, string>({
+      query: (id) => ({ url: `/categories/${id}`, method: "DELETE" }),
+      invalidatesTags: ["Category"],
+    }),
   }),
 });
 
@@ -78,4 +92,6 @@ export const {
   useUpdateProductMutation,
   useDeleteProductMutation,
   useListCategoriesQuery,
+  useCreateCategoryMutation,
+  useDeleteCategoryMutation,
 } = productsApi;

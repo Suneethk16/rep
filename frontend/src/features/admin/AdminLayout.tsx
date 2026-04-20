@@ -4,6 +4,7 @@ import clsx from "clsx";
 const NAV_ITEMS = [
   { to: "/admin", label: "Dashboard", end: true },
   { to: "/admin/products", label: "Products" },
+  { to: "/admin/categories", label: "Categories" },
   { to: "/admin/users", label: "Users" },
   { to: "/admin/orders", label: "Orders" },
 ];

@@ -90,7 +90,9 @@ export function AdminProductsPage() {
                 <td className="px-4 py-3 font-mono text-xs">{p.sku}</td>
                 <td className="px-4 py-3">{p.name}</td>
                 <td className="px-4 py-3">{formatPrice(p.price)}</td>
-                <td className="px-4 py-3">{p.stock}</td>
+                <td className="px-4 py-3">
+                  {p.stock} <span className="text-xs text-slate-400">{p.stock_unit === "kg" ? "kg" : "pcs"}</span>
+                </td>
                 <td className="px-4 py-3 text-right">
                   <button
                     type="button"

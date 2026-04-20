@@ -32,6 +32,7 @@ class Product(Base, TimestampMixin):
     description: Mapped[str] = mapped_column(Text, default="", nullable=False)
     price: Mapped[Decimal] = mapped_column(Numeric(12, 2), nullable=False)
     stock: Mapped[int] = mapped_column(default=0, nullable=False)
+    stock_unit: Mapped[str] = mapped_column(String(8), default="qty", nullable=False)
     image_url: Mapped[str | None] = mapped_column(String(1024))
 
     category_id: Mapped[uuid.UUID | None] = mapped_column(

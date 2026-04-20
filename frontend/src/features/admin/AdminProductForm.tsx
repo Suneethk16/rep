@@ -25,6 +25,7 @@ interface FormValues {
   description: string;
   price: string;
   stock: number;
+  stock_unit: string;
   image_url: string;
   category_id: string;
 }
@@ -54,6 +55,7 @@ export function AdminProductForm({ product, categories, onDone }: Props) {
       description: "",
       price: "",
       stock: 0,
+      stock_unit: "qty",
       image_url: "",
       category_id: "",
     },
@@ -66,6 +68,7 @@ export function AdminProductForm({ product, categories, onDone }: Props) {
       description: product?.description ?? "",
       price: product?.price ?? "",
       stock: product?.stock ?? 0,
+      stock_unit: product?.stock_unit ?? "qty",
       image_url: product?.image_url ?? "",
       category_id: product?.category_id ?? "",
     });
@@ -95,6 +98,7 @@ export function AdminProductForm({ product, categories, onDone }: Props) {
       description: values.description,
       price: values.price,
       stock: Number(values.stock),
+      stock_unit: values.stock_unit,
       image_url: values.image_url || null,
       category_id: values.category_id || null,
     };
@@ -146,27 +150,18 @@ export function AdminProductForm({ product, categories, onDone }: Props) {
         />
       </div>
 
-      <div className="grid gap-4 sm:grid-cols-3">
+      <div className="grid gap-4 sm:grid-cols-2">
         <Input
-          label="Price"
+          label="Price (₹)"
           type="number"
           step="0.01"
           min="0"
           error={errors.price?.message}
           {...register("price", { required: "Required" })}
         />
-        <Input
-          label="Stock"
-          type="number"
-          min="0"
-          error={errors.stock?.message}
-          {...register("stock", { required: "Required", valueAsNumber: true })}
-        />
         <div>
-          <label htmlFor="category_id" className="label">
-            Category
-          </label>
-          <select id="category_id" className="input" {...register("category_id")}>
+          <label className="label">Category</label>
+          <select className="input" {...register("category_id")}>
             <option value="">— none —</option>
             {categories.map((c) => (
               <option key={c.id} value={c.id}>
@@ -174,7 +169,39 @@ export function AdminProductForm({ product, categories, onDone }: Props) {
               </option>
             ))}
           </select>
+          {categories.length === 0 && (
+            <p className="mt-1 text-xs text-amber-600">
+              No categories yet — add some in the{" "}
+              <a href="/admin/categories" className="underline">
+                Categories
+              </a>{" "}
+              page.
+            </p>
+          )}
         </div>
+      </div>
+
+      <div>
+        <label className="label">Stock</label>
+        <div className="flex gap-2">
+          <input
+            type="number"
+            min="0"
+            className="input w-32"
+            {...register("stock", { required: "Required", valueAsNumber: true })}
+          />
+          <select
+            className="input w-36"
+            {...register("stock_unit")}
+            title="Stock unit"
+          >
+            <option value="qty">Quantity (pcs)</option>
+            <option value="kg">Weight (kg)</option>
+          </select>
+        </div>
+        {errors.stock && (
+          <p className="mt-1 text-xs text-red-600">{errors.stock.message}</p>
+        )}
       </div>
 
       <div className="space-y-2">
