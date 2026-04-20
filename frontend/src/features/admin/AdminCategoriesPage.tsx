@@ -35,11 +35,8 @@ export function AdminCategoriesPage() {
     handleSubmit,
     reset,
     setValue,
-    watch,
     formState: { errors },
   } = useForm<FormValues>({ defaultValues: { name: "", slug: "" } });
-
-  const nameValue = watch("name");
 
   const onNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setValue("slug", toSlug(e.target.value));
