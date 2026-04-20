@@ -25,6 +25,15 @@ export default defineConfig({
   },
   build: {
     outDir: "dist",
-    sourcemap: true,
+    sourcemap: false,
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          vendor: ["react", "react-dom", "react-router-dom"],
+          query: ["@tanstack/react-query"],
+          stripe: ["@stripe/react-stripe-js", "@stripe/stripe-js"],
+        },
+      },
+    },
   },
 });
