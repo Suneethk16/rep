@@ -8,7 +8,7 @@ from prometheus_fastapi_instrumentator import Instrumentator
 
 from app.core.config import settings
 from app.core.exceptions import AppError, app_error_handler, unhandled_error_handler
-from app.core.logging import configure_logging, get_logger
+from app.core.logging import RequestLoggingMiddleware, configure_logging, get_logger
 from app.core.security import hash_password
 from app.db.redis import close_redis, get_redis
 from app.db.session import AsyncSessionLocal
@@ -75,6 +75,7 @@ if settings.cors_origins:
         allow_headers=["*"],
     )
 
+app.add_middleware(RequestLoggingMiddleware)
 app.add_exception_handler(AppError, app_error_handler)
 app.add_exception_handler(Exception, unhandled_error_handler)
 
