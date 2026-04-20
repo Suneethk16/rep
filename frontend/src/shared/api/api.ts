@@ -11,8 +11,6 @@ import { loggedOut, tokensRefreshed } from "@/features/auth/authSlice";
 import type { RootState } from "@/app/store";
 import type { Token } from "./types";
 
-// Empty base URL → requests go to same-origin, relying on the Vite dev proxy
-// (see vite.config.ts) in development and on nginx in production.
 const baseUrl = `${import.meta.env.VITE_API_BASE_URL ?? ""}/api/v1`;
 
 const rawBaseQuery = fetchBaseQuery({
