@@ -11,11 +11,17 @@ from app.models import *  # noqa: F401,F403 — register all models with Base.me
 
 
 def _ipv4_connect_args(url: str) -> dict:
-    """Force IPv4 resolution — Render free tier has no IPv6 outbound."""
+    """Force IPv4 + carry SSL settings — Render free tier has no IPv6 outbound,
+    and psycopg ignores URL query params when hostaddr is supplied."""
     try:
+        from urllib.parse import parse_qs
         parsed = urlparse(url)
-        addrs = socket.getaddrinfo(parsed.hostname, parsed.port, socket.AF_INET)
-        return {"hostaddr": addrs[0][4][0]}
+        addrs = socket.getaddrinfo(parsed.hostname, parsed.port or 5432, socket.AF_INET)
+        args: dict = {"hostaddr": addrs[0][4][0], "sslmode": "require"}
+        qs = parse_qs(parsed.query)
+        if "sslmode" in qs:
+            args["sslmode"] = qs["sslmode"][0]
+        return args
     except Exception:
         return {}
 
