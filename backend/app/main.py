@@ -9,7 +9,9 @@ from prometheus_fastapi_instrumentator import Instrumentator
 from app.core.config import settings
 from app.core.exceptions import AppError, app_error_handler, unhandled_error_handler
 from app.core.logging import configure_logging, get_logger
+from app.core.security import hash_password
 from app.db.redis import close_redis, get_redis
+from app.db.session import AsyncSessionLocal
 from app.routes import admin as admin_routes
 from app.routes import auth as auth_routes
 from app.routes import cart as cart_routes
@@ -20,12 +22,34 @@ from app.routes import payment as payment_routes
 from app.routes import user as user_routes
 
 
+async def _seed_admin() -> None:
+    from sqlalchemy import select
+    from app.models.user import User, UserRole
+
+    if not settings.first_admin_email or not settings.first_admin_password:
+        return
+    async with AsyncSessionLocal() as db:
+        existing = await db.scalar(select(User).where(User.email == settings.first_admin_email))
+        if existing:
+            return
+        admin = User(
+            email=settings.first_admin_email,
+            hashed_password=hash_password(settings.first_admin_password),
+            full_name="Admin",
+            role=UserRole.ADMIN,
+            is_active=True,
+        )
+        db.add(admin)
+        await db.commit()
+
+
 @asynccontextmanager
 async def lifespan(app: FastAPI):
     configure_logging()
     logger = get_logger()
     logger.info("app_startup", env=settings.app_env)
     await get_redis()
+    await _seed_admin()
     try:
         yield
     finally:
