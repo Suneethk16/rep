@@ -27,6 +27,9 @@ class Settings(BaseSettings):
     database_url: str
     database_url_sync: str
 
+    # Full Redis URL overrides host/port (required for TLS providers like Upstash).
+    # Format: rediss://default:PASSWORD@HOST:6380
+    redis_url: str | None = None
     redis_host: str = "redis"
     redis_port: int = 6379
     redis_cache_db: int = 0
@@ -54,6 +57,10 @@ class Settings(BaseSettings):
 
     @property
     def redis_cache_url(self) -> str:
+        if self.redis_url:
+            # Strip any trailing /db suffix from the base URL, then append cache DB index.
+            base = self.redis_url.rstrip("/").rsplit("/", 1)[0] if "/" in self.redis_url.split("@")[-1] else self.redis_url
+            return f"{base}/{self.redis_cache_db}"
         return f"redis://{self.redis_host}:{self.redis_port}/{self.redis_cache_db}"
 
 
