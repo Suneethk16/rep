@@ -1,7 +1,12 @@
 {
   "permissions": {
     "allow": [
-      "Bash(git commit -m ' *)"
+      "Bash(git commit -m ' *)",
+      "Bash(npm audit *)",
+      "Bash(python3 -c ' *)",
+      "Bash(git add *)",
+      "Bash(git commit -m 'fix: force Vercel rebuild to bake in empty VITE_API_BASE_URL *)",
+      "Bash(git push *)"
     ]
   }
 }
